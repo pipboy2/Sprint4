@@ -542,6 +542,10 @@ namespace TheAionProject
             return traveler;
         }
 
+        public void DisplayListOfAllNpcObjects()
+        {
+            DisplayGamePlayScreen("List: Npc Objects", Text.ListAllNpcObjects(_gameUniverse.Npcs), ActionMenu.AdminMenu, "");
+        }
         #region ----- display responses to menu action choices -----
         /// <summary>
         /// display all relevant information about the traveler
@@ -576,8 +580,15 @@ namespace TheAionProject
             //
             List<GameObject> gameObjectsInCurrentSpaceTimeLocation = _gameUniverse.GetGameObjectsBySpaceTimeLocationId(_gameTraveler.SpaceTimeLocationID);
 
+            //
+            // get list of NPCs in current space-time location
+            //
+
+            List<Npc> npcsInCurrentSpaceTimeLocation = _gameUniverse.GetNpcsBySpaceTimeLocationId(_gameTraveler.SpaceTimeLocationID);
+
             string messageBoxText = Text.LookAround(currentSpaceTimeLocation) + Environment.NewLine + Environment.NewLine;
-            messageBoxText += Text.GameObjectsChooseList(gameObjectsInCurrentSpaceTimeLocation);
+            messageBoxText += Text.GameObjectsChooseList(gameObjectsInCurrentSpaceTimeLocation) + Environment.NewLine;
+            messageBoxText += Text.NpcsChooseList(npcsInCurrentSpaceTimeLocation);
 
             DisplayGamePlayScreen("Current Location", messageBoxText, ActionMenu.MainMenu, "");
         }

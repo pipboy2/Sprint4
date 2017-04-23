@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Assets\ActionMenu.cs" />
     <Compile Include="Assets\Text.cs" />
+    <Compile Include="Assets\UniverseNpcs.cs" />
     <Compile Include="Assets\UniverseObjectsGameObjects.cs" />
     <Compile Include="Assets\UniverseObjectsSpaceTimeLocations.cs" />
     <Compile Include="ConsoleUtilities\ConsoleLayout.cs" />
@@ -53,10 +54,13 @@
     <Compile Include="ConsoleUtilities\ConsoleWindowHelper.cs" />
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Models\Character.cs" />
+    <Compile Include="Models\Civillian.cs" />
     <Compile Include="Models\Enums\TravelerAction.cs" />
     <Compile Include="Models\Enums\TravelerObjectType.cs" />
     <Compile Include="Models\GameObject.cs" />
+    <Compile Include="Models\ISpeak.cs" />
     <Compile Include="Models\Menu.cs" />
+    <Compile Include="Models\Npc.cs" />
     <Compile Include="Models\SpaceTimeLocation.cs" />
     <Compile Include="Models\SpaceTimeLocationObject.cs" />
     <Compile Include="Models\Traveler.cs" />

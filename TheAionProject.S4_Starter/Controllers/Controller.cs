@@ -182,6 +182,10 @@ namespace TheAionProject
                         _gameConsoleView.DisplayGamePlayScreen("Current Location", Text.CurrentLocationInfo(_currentLocation), ActionMenu.MainMenu, "");
                         break;
 
+                    case TravelerAction.ListNonplayerCharacters:
+                        _gameConsoleView.DisplayListOfAllNpcObjects();
+                        break;
+
                     case TravelerAction.Exit:
                         _playingGame = false;
                         break;

@@ -18,6 +18,14 @@ namespace TheAionProject
         //
         private List<SpaceTimeLocation> _spaceTimeLocations;
         private List<GameObject> _gameObjects;
+        private List<Npc> _npcs;
+
+        public List<Npc> Npcs
+        {
+            get { return _npcs; }
+            set { _npcs = value; }
+        }
+
 
         public List<SpaceTimeLocation> SpaceTimeLocations
         {
@@ -56,7 +64,8 @@ namespace TheAionProject
         private void IntializeUniverse()
         {
             _spaceTimeLocations = UniverseObjects.SpaceTimeLocations;
-            _gameObjects = UniverseObjects.GameObjects;            
+            _gameObjects = UniverseObjects.GameObjects;
+            _npcs = UniverseObjects.Npcs;
         }
 
         #endregion
@@ -317,6 +326,85 @@ namespace TheAionProject
             }
 
             return travelerObjects;
+        }
+
+        public bool IsValidNpcByLocationId(int npcId, int currentSpaceTimeLocation)
+        {
+            List<int> npcIds = new List<int>();
+
+            //
+            // create a list of NPC ids in current space-time location
+            //
+
+            foreach (Npc npc in _npcs)
+            {
+                if (npc.SpaceTimeLocationID == currentSpaceTimeLocation)
+                {
+                    npcIds.Add(npc.Id);
+                }
+
+            }
+
+            //
+            // determine if the game object id is a valid id and return the result
+            //
+
+            if (npcIds.Contains(npcId))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public Npc GetNpcById(int Id)
+        {
+            Npc npcToReturn = null;
+
+            //
+            // run through the NPC object list and grab the correct one
+            //
+
+            foreach (Npc npc in _npcs)
+            {
+                if (npc.Id == Id)
+                {
+                    npcToReturn = npc;
+                }
+            }
+
+            //
+            // the specified ID was not found in the universe
+            // throw and exception
+            //
+
+            if (npcToReturn == null)
+            {
+                string feedbackMessage = $"The NPC ID {Id} does not exist in the current Universe.";
+                throw new ArgumentException(Id.ToString(), feedbackMessage);
+            }
+
+            return npcToReturn;
+        }
+
+        public List<Npc> GetNpcsBySpaceTimeLocationId(int spaceTimeLocationID)
+        {
+            List<Npc> npcs = new List<Npc>();
+
+            //
+            // run through the NPC object list and grab all that are in the current space-time location
+            //
+            foreach (Npc npc in _npcs)
+            {
+                if (npc.SpaceTimeLocationID == spaceTimeLocationID)
+                {
+                    npcs.Add(npc);
+                }
+            }
+
+            return npcs;
         }
 
         #endregion
