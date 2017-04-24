@@ -553,7 +553,7 @@ namespace TheAionProject
         public void DisplayTravelerInfo()
         {
             SpaceTimeLocation currentSpaceTimeLocation = _gameUniverse.GetSpaceTimeLocationById(_gameTraveler.SpaceTimeLocationID);
-            DisplayGamePlayScreen("Traveler Information", Text.TravelerInfo(_gameTraveler, currentSpaceTimeLocation), ActionMenu.MainMenu, "");
+            DisplayGamePlayScreen("Traveler Information", Text.TravelerInfo(_gameTraveler, currentSpaceTimeLocation), ActionMenu.TravelerMenu, "");
         }
 
         /// <summary>
@@ -599,7 +599,7 @@ namespace TheAionProject
         /// <param name="gameObject"></param>
         public void DisplayGameObjectInfo(GameObject gameObject)
         {
-            DisplayGamePlayScreen("Current Location", Text.LookAt(gameObject), ActionMenu.MainMenu, "");
+            DisplayGamePlayScreen("Current Location", Text.LookAt(gameObject), ActionMenu.ObjectMenu, "");
         }
 
         /// <summary>
@@ -660,7 +660,7 @@ namespace TheAionProject
 
             if (gameObjectsInSpaceTimeLocation.Count > 0)
             {
-                DisplayGamePlayScreen("Look at a Object", Text.GameObjectsChooseList(gameObjectsInSpaceTimeLocation), ActionMenu.MainMenu, "");
+                DisplayGamePlayScreen("Look at a Object", Text.GameObjectsChooseList(gameObjectsInSpaceTimeLocation), ActionMenu.ObjectMenu, "");
 
                 while (!validGamerObjectId)
                 {
@@ -685,7 +685,7 @@ namespace TheAionProject
             }
             else
             {
-                DisplayGamePlayScreen("Look at a Object", "It appears there are no game objects here.", ActionMenu.MainMenu, "");
+                DisplayGamePlayScreen("Look at a Object", "It appears there are no game objects here.", ActionMenu.ObjectMenu, "");
             }
 
             return gameObjectId;
@@ -707,7 +707,7 @@ namespace TheAionProject
 
             if (travelerObjectsInSpaceTimeLocation.Count > 0)
             {
-                DisplayGamePlayScreen("Pick Up Game Object", Text.GameObjectsChooseList(travelerObjectsInSpaceTimeLocation), ActionMenu.MainMenu, "");
+                DisplayGamePlayScreen("Pick Up Game Object", Text.GameObjectsChooseList(travelerObjectsInSpaceTimeLocation), ActionMenu.ObjectMenu, "");
 
                 while (!validGameObjectId)
                 {
@@ -741,7 +741,7 @@ namespace TheAionProject
             }
             else
             {
-                DisplayGamePlayScreen("Pick Up Game Object", "It appears there are no game objects here.", ActionMenu.MainMenu, "");
+                DisplayGamePlayScreen("Pick Up Game Object", "It appears there are no game objects here.", ActionMenu.ObjectMenu, "");
             }
 
             return gameObjectId;
@@ -758,7 +758,7 @@ namespace TheAionProject
 
             if (_gameTraveler.Inventory.Count > 0)
             {
-                DisplayGamePlayScreen("Put Down Game Object", Text.GameObjectsChooseList(_gameTraveler.Inventory), ActionMenu.MainMenu, "");
+                DisplayGamePlayScreen("Put Down Game Object", Text.GameObjectsChooseList(_gameTraveler.Inventory), ActionMenu.ObjectMenu, "");
 
                 while (!validInventoryObjectId)
                 {
@@ -789,7 +789,7 @@ namespace TheAionProject
             }
             else
             {
-                DisplayGamePlayScreen("Pick Up Game Object", "It appears there are no objects currently in inventory.", ActionMenu.MainMenu, "");
+                DisplayGamePlayScreen("Pick Up Game Object", "It appears there are no objects currently in inventory.", ActionMenu.ObjectMenu, "");
             }
 
             return travelerObjectId;
@@ -801,7 +801,7 @@ namespace TheAionProject
         /// <param name="objectAddedToInventory">game object</param>
         public void DisplayConfirmTravelerObjectAddedToInventory(TravelerObject objectAddedToInventory)
         {
-            DisplayGamePlayScreen("Pick Up Game Object", $"The {objectAddedToInventory.Name} has been added to your inventory.", ActionMenu.MainMenu, "");
+            DisplayGamePlayScreen("Pick Up Game Object", $"The {objectAddedToInventory.Name} has been added to your inventory.", ActionMenu.ObjectMenu, "");
         }
 
         /// <summary>
@@ -810,7 +810,7 @@ namespace TheAionProject
         /// <param name="objectRemovedFromInventory">game object</param>
         public void DisplayConfirmTravelerObjectRemovedFromInventory(TravelerObject objectRemovedFromInventory)
         {
-            DisplayGamePlayScreen("Put Down Game Object", $"The {objectRemovedFromInventory.Name} has been removed from your inventory.", ActionMenu.MainMenu, "");
+            DisplayGamePlayScreen("Put Down Game Object", $"The {objectRemovedFromInventory.Name} has been removed from your inventory.", ActionMenu.ObjectMenu, "");
         }
 
         /// <summary>
@@ -827,7 +827,7 @@ namespace TheAionProject
                 visitedSpaceTimeLocations.Add(_gameUniverse.GetSpaceTimeLocationById(spaceTimeLocationId));
             }
 
-            DisplayGamePlayScreen("Space-Time Locations Visited", Text.VisitedLocations(visitedSpaceTimeLocations), ActionMenu.MainMenu, "");
+            DisplayGamePlayScreen("Space-Time Locations Visited", Text.VisitedLocations(visitedSpaceTimeLocations), ActionMenu.TravelerMenu, "");
         }
 
         /// <summary>
@@ -835,7 +835,7 @@ namespace TheAionProject
         /// </summary>
         public void DisplayInventory()
         {
-            DisplayGamePlayScreen("Current Inventory", Text.CurrentInventory(_gameTraveler.Inventory), ActionMenu.MainMenu, "");
+            DisplayGamePlayScreen("Current Inventory", Text.CurrentInventory(_gameTraveler.Inventory), ActionMenu.TravelerMenu, "");
         }
 
         /// <summary>
@@ -852,6 +852,75 @@ namespace TheAionProject
         public void DisplayListOfAllGameObjects()
         {
             DisplayGamePlayScreen("List: Game Objects", Text.ListAllGameObjects(_gameUniverse.GameObjects), ActionMenu.AdminMenu, "");
+        }
+
+        public int DisplayGetNpcToTalkTo()
+        {
+            int npcId = 0;
+            bool validNpcId = false;
+
+            //
+            // get a list of NPCs in the current space-time location
+            //
+
+            List<Npc> npcsInSpaceTimeLocation = _gameUniverse.GetNpcsBySpaceTimeLocationId(_gameTraveler.SpaceTimeLocationID);
+
+            if (npcsInSpaceTimeLocation.Count > 0)
+            {
+                DisplayGamePlayScreen("Choose Character to Speak With", Text.NpcsChooseList(npcsInSpaceTimeLocation), ActionMenu.NpcMenu, "");
+
+                while (!validNpcId)
+                {
+                    //
+                    // get an integer from the player
+                    //
+
+                    GetInteger($"Enter the Id number of the character you wish to speak with: ", 0, 0, out npcId);
+
+                    //
+                    // validate integer as a valid NPC id and in current location
+                    //
+
+                    if (_gameUniverse.IsValidNpcByLocationId(npcId, _gameTraveler.SpaceTimeLocationID))
+                    {
+                        Npc npc = _gameUniverse.GetNpcById(npcId);
+                        if (npc is ISpeak)
+                        {
+                            validNpcId = true;
+                        }
+                        else
+                        {
+                            ClearInputBox();
+                            DisplayInputErrorMessage("It appears this character has nothing to say. Please try again.");
+                        }
+                    }
+                    else
+                    {
+                        ClearInputBox();
+                        DisplayInputErrorMessage("It appears you entered an invalid NPC id. Please try again.");
+                    }
+                }
+            }
+            else
+            {
+                DisplayGamePlayScreen("Choose Character to Speak With", "It appears there are no NPCs here.", ActionMenu.NpcMenu, "");
+            }
+
+            return npcId;
+        }
+
+        public void DisplayTalkTo(Npc npc)
+        {
+            ISpeak speakingNpc = npc as ISpeak;
+
+            string message = speakingNpc.Speak();
+
+            if (message == "")
+            {
+                message = "It appears this character has nothing to say. Please try again.";
+            }
+
+            DisplayGamePlayScreen("Speak to Character", message, ActionMenu.NpcMenu, "");
         }
 
         #endregion

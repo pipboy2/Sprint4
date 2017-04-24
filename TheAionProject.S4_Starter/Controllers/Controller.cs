@@ -114,15 +114,7 @@ namespace TheAionProject
                 //
                 // get next game action from player
                 //
-                if (ActionMenu.currentMenu == ActionMenu.CurrentMenu.MainMenu)
-                {
-                    travelerActionChoice = _gameConsoleView.GetActionMenuChoice(ActionMenu.MainMenu);
-                }
-                else if (ActionMenu.currentMenu == ActionMenu.CurrentMenu.AdminMenu)
-                {
-                    travelerActionChoice = _gameConsoleView.GetActionMenuChoice(ActionMenu.AdminMenu);
-                }
-
+                travelerActionChoice = GetNextTravelerAction();
 
                 //
                 // choose an action based on the player's menu choice
@@ -186,6 +178,25 @@ namespace TheAionProject
                         _gameConsoleView.DisplayListOfAllNpcObjects();
                         break;
 
+                    case TravelerAction.TravelMenu:
+                        ActionMenu.currentMenu = ActionMenu.CurrentMenu.TravelerMenu;
+                        _gameConsoleView.DisplayGamePlayScreen("Traveler Menu", "Select an operation from the menu.", ActionMenu.TravelerMenu, "");
+                        break;
+
+                    case TravelerAction.ObjectMenu:
+                        ActionMenu.currentMenu = ActionMenu.CurrentMenu.ObjectMenu;
+                        _gameConsoleView.DisplayGamePlayScreen("Object Menu", "Select an operation from the menu.", ActionMenu.ObjectMenu, "");
+                        break;
+
+                    case TravelerAction.NonplayerCharacterMenu:
+                        ActionMenu.currentMenu = ActionMenu.CurrentMenu.NpcMenu;
+                        _gameConsoleView.DisplayGamePlayScreen("NPC Menu", "Select an operation from the menu.", ActionMenu.NpcMenu, "");
+                        break;
+
+                    case TravelerAction.TalkTo:
+                        TalkToAction();
+                        break;
+
                     case TravelerAction.Exit:
                         _playingGame = false;
                         break;
@@ -199,6 +210,39 @@ namespace TheAionProject
             // close the application
             //
             Environment.Exit(1);
+        }
+
+        private TravelerAction GetNextTravelerAction()
+        {
+            TravelerAction travelerActionChoice = TravelerAction.None;
+
+            switch (ActionMenu.currentMenu)
+            {
+                case ActionMenu.CurrentMenu.MainMenu:
+                    travelerActionChoice = _gameConsoleView.GetActionMenuChoice(ActionMenu.MainMenu);
+                    break;
+
+                case ActionMenu.CurrentMenu.ObjectMenu:
+                    travelerActionChoice = _gameConsoleView.GetActionMenuChoice(ActionMenu.ObjectMenu);
+                    break;
+
+                case ActionMenu.CurrentMenu.NpcMenu:
+                    travelerActionChoice = _gameConsoleView.GetActionMenuChoice(ActionMenu.NpcMenu);
+                    break;
+
+                case ActionMenu.CurrentMenu.TravelerMenu:
+                    travelerActionChoice = _gameConsoleView.GetActionMenuChoice(ActionMenu.TravelerMenu);
+                    break;
+
+                case ActionMenu.CurrentMenu.AdminMenu:
+                    travelerActionChoice = _gameConsoleView.GetActionMenuChoice(ActionMenu.AdminMenu);
+                    break;
+
+                default:
+                    break;
+            }
+
+            return travelerActionChoice;
         }
 
         /// <summary>
@@ -343,6 +387,33 @@ namespace TheAionProject
             }
         }
 
+        private void TalkToAction()
+        {
+            //
+            // display a list of NPCs in space-time location and get a player choice
+            //
+
+            int npcToTalkToId = _gameConsoleView.DisplayGetNpcToTalkTo();
+
+            //
+            // display NPC's message
+            //
+
+            if (npcToTalkToId != 0)
+            {
+                //
+                // get the NPC from the universe
+                //
+
+                Npc npc = _gameUniverse.GetNpcById(npcToTalkToId);
+
+                //
+                // display information for the object chosen
+                //
+
+                _gameConsoleView.DisplayTalkTo(npc);
+            }
+        }
         #endregion
     }
 }
